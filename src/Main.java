@@ -1,6 +1,11 @@
-public class Main {
+import presenter.CommandLinePresenterImpl;
+import view.CommandLineUIImpl;
 
+import java.util.Scanner;
+
+public class Main {
     public static void main(String[] args) {
-	// write your code here
+        CommandLinePresenterImpl presenter = new CommandLinePresenterImpl();
+        CommandLineUIImpl commandLine = new CommandLineUIImpl(presenter, new Scanner(System.in));
     }
 }
