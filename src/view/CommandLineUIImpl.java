@@ -1,5 +1,7 @@
 package view;
 
+import model.BoardState;
+import model.SteepestHillClimbingSearch;
 import presenter.CommandLinePresenter;
 
 import java.util.InputMismatchException;
@@ -20,13 +22,16 @@ public class CommandLineUIImpl implements CommandLineUI {
         this.scanner = scanner;
     }
 
-    private void executeCommandLine() {
+    public void executeCommandLine() {
         boolean stop = false;
         while(!stop) {
             showChoices();
             int choice = getUserChoice();
             switch (choice) {
                 case RANDOM_CHOICE:
+                    BoardState boardState = new BoardState();
+                    SteepestHillClimbingSearch shc = new SteepestHillClimbingSearch();
+                    System.out.println(shc.performSearch(boardState));
                     break;
                 case SPECIFIC_CHOICE:
                     break;
