@@ -1,7 +1,7 @@
 package view;
 
-import model.BoardState;
-import model.SteepestHillClimbingSearch;
+import enums.Algorithm;
+import pojo.Stat;
 import presenter.CommandLinePresenter;
 
 import java.util.InputMismatchException;
@@ -9,33 +9,31 @@ import java.util.Scanner;
 
 public class CommandLineUIImpl implements CommandLineUI {
 
-    private static final int RANDOM_CHOICE = 1;
-    private static final int SPECIFIC_CHOICE = 2;
-    private static final int FILE_INPUT_CHOICE = 3;
-    private static final int EXIT_CHOICE = 4;
+    private static final Scanner scanner = new Scanner(System.in);
+    private static final int STEEPEST_HILL_CLIMBING_CHOICE = 1;
+    private static final int GENETIC_ALGORITHM_CHOICE = 2;
+    private static final int EXIT_CHOICE = 3;
 
     private CommandLinePresenter commandLinePresenter;
-    private Scanner scanner;
 
-    public CommandLineUIImpl(CommandLinePresenter commandLinePresenter, Scanner scanner) {
+    public CommandLineUIImpl(CommandLinePresenter commandLinePresenter) {
         this.commandLinePresenter = commandLinePresenter;
-        this.scanner = scanner;
     }
 
     public void executeCommandLine() {
         boolean stop = false;
         while(!stop) {
-            showChoices();
+            System.out.println("\nChoose a search to use:");
+            System.out.println("1. Steepest Hill Climbing Search");
+            System.out.println("2. Genetic Algorithm Search");
+            System.out.println("3. Exit");
             int choice = getUserChoice();
             switch (choice) {
-                case RANDOM_CHOICE:
-                    BoardState boardState = new BoardState();
-                    SteepestHillClimbingSearch shc = new SteepestHillClimbingSearch();
-                    System.out.println(shc.performSearch(boardState));
+                case STEEPEST_HILL_CLIMBING_CHOICE:
+                    commandLinePresenter.executeSearch(getNumber(), Algorithm.STEEPEST_HILL_CLIMBING);
                     break;
-                case SPECIFIC_CHOICE:
-                    break;
-                case FILE_INPUT_CHOICE:
+                case GENETIC_ALGORITHM_CHOICE:
+                    commandLinePresenter.executeSearch(getNumber(), Algorithm.GENETIC_ALGORITHM);
                     break;
                 case EXIT_CHOICE:
                     stop = true;
@@ -47,12 +45,18 @@ public class CommandLineUIImpl implements CommandLineUI {
         }
     }
 
+    private int getNumber() throws InputMismatchException {
+        System.out.println("Enter a number N for the algorithm to go up to: ");
+        System.out.println("Note: It will always start at N = 4.");
+        return scanner.nextInt();
+    }
+
     private int getUserChoice() throws InputMismatchException {
         int choice = 0;
         boolean validChoice = false;
         while(!validChoice) {
             choice = scanner.nextInt();
-            if(choice == RANDOM_CHOICE || choice == SPECIFIC_CHOICE || choice == FILE_INPUT_CHOICE || choice == EXIT_CHOICE)
+            if(choice == STEEPEST_HILL_CLIMBING_CHOICE || choice == GENETIC_ALGORITHM_CHOICE || choice == EXIT_CHOICE)
                 validChoice = true;
             else
                 System.out.println("Incorrect input. Try again!");
@@ -60,12 +64,14 @@ public class CommandLineUIImpl implements CommandLineUI {
         return choice;
     }
 
-    private void showChoices() {
-        System.out.println("\nChoose a type input:");
-        System.out.println("1. Randomly generated.");
-        System.out.println("2. Specific configuration.");
-        System.out.println("3. File input (used to create table data)");
-        System.out.println("4. Exit");
+    @Override
+    public void printStatMessage(Stat stat) {
+        System.out.println(stat);
+    }
+
+    @Override
+    public void printErrorMessage(int n, Algorithm algorithm) {
+        System.out.println("\nSize: " + n + "\nError: " + algorithm + " could not solve the problem at size equal to " + n + ".");
     }
 
 }

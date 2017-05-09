@@ -1,5 +1,8 @@
 package model;
 
+import pojo.BoardState;
+import pojo.Stat;
+
 public interface LocalSearchAlgorithm {
-    boolean performSearch(BoardState initialState);
+    Stat performSearch(BoardState initialState);
 }

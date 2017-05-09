@@ -1,5 +1,8 @@
 package model;
 
+import pojo.BoardState;
+import pojo.Stat;
+
 import java.util.*;
 
 public class SteepestHillClimbingSearch implements LocalSearchAlgorithm {
@@ -12,31 +15,30 @@ public class SteepestHillClimbingSearch implements LocalSearchAlgorithm {
     }
 
     /**
-     * Returns true if the search has found a complete answer, false otherwise.
+     * Returns stat with true if the search has found a complete answer, false otherwise.
      * @param initialState
      * @return
      */
     @Override
-    public boolean performSearch(BoardState initialState) {
+    public Stat performSearch(BoardState initialState) {
+        // start timer
+        long start = System.currentTimeMillis();
         // get our heuristic value for the state (number of attacking queens)
         int heuristicValue = determineHeuristicValue(initialState);
         // set the heuristic to our initial state
         initialState.setHeuristicValue(heuristicValue);
         // check if our initial state is already solved
-        if(initialState.getHeuristicValue() == 0) return true;
+        if(initialState.getHeuristicValue() == 0) return new Stat(initialState, initialState.getSize(),true, System.currentTimeMillis() - start);
         // otherwise, run loop till goal is found and set current to the initial state
         BoardState currentState = initialState;
         while(true) {
-
-            System.out.println(currentState);
-
             // get all successors to current
             Queue<BoardState> successors = getSuccessors(currentState);
             // get the front successor, we know it is the best due to the comparator
             BoardState highestValuedSuccessor = successors.remove();
             // check to see if the successor is a better result than current
             // if it is, then we can set current to our successor, otherwise return
-            if(highestValuedSuccessor.getHeuristicValue() >= currentState.getHeuristicValue()) return currentState.getHeuristicValue() == 0 ? true : false;
+            if(highestValuedSuccessor.getHeuristicValue() >= currentState.getHeuristicValue()) return currentState.getHeuristicValue() == 0 ? new Stat(currentState, currentState.getSize(),true, System.currentTimeMillis() - start) : new Stat(currentState, currentState.getSize(),false, System.currentTimeMillis() - start);
             else currentState = highestValuedSuccessor;
         }
     }
@@ -91,7 +93,7 @@ public class SteepestHillClimbingSearch implements LocalSearchAlgorithm {
      * @param boardState
      * @return
      */
-    public int determineHeuristicValue(BoardState boardState) {
+    private int determineHeuristicValue(BoardState boardState) {
         int pairs = 0;
         for(int i = 0; i < boardState.getBoard().length; i++) {
             for(int j = 0; j < boardState.getBoard()[i].length; j++) {
