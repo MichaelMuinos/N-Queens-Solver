@@ -23,12 +23,14 @@ public class SteepestHillClimbingSearch implements LocalSearchAlgorithm {
     public Stat performSearch(BoardState initialState) {
         // start timer
         long start = System.currentTimeMillis();
+        // search cost variable
+        int searchCost = 0;
         // get our heuristic value for the state (number of attacking queens)
         int heuristicValue = determineHeuristicValue(initialState);
         // set the heuristic to our initial state
         initialState.setHeuristicValue(heuristicValue);
         // check if our initial state is already solved
-        if(initialState.getHeuristicValue() == 0) return new Stat(initialState, initialState.getSize(),true, System.currentTimeMillis() - start);
+        if(initialState.getHeuristicValue() == 0) return new Stat(initialState, initialState.getSize(), true, searchCost, (System.currentTimeMillis() - start) / 1000.0);
         // otherwise, run loop till goal is found and set current to the initial state
         BoardState currentState = initialState;
         while(true) {
@@ -36,9 +38,11 @@ public class SteepestHillClimbingSearch implements LocalSearchAlgorithm {
             Queue<BoardState> successors = getSuccessors(currentState);
             // get the front successor, we know it is the best due to the comparator
             BoardState highestValuedSuccessor = successors.remove();
+            // add to our search cost
+            ++searchCost;
             // check to see if the successor is a better result than current
             // if it is, then we can set current to our successor, otherwise return
-            if(highestValuedSuccessor.getHeuristicValue() >= currentState.getHeuristicValue()) return currentState.getHeuristicValue() == 0 ? new Stat(currentState, currentState.getSize(),true, System.currentTimeMillis() - start) : new Stat(currentState, currentState.getSize(),false, System.currentTimeMillis() - start);
+            if(highestValuedSuccessor.getHeuristicValue() >= currentState.getHeuristicValue()) return currentState.getHeuristicValue() == 0 ? new Stat(currentState, currentState.getSize(), true, searchCost, (System.currentTimeMillis() - start) / 1000.0) : new Stat(currentState, currentState.getSize(), false, searchCost, (System.currentTimeMillis() - start) / 1000.0);
             else currentState = highestValuedSuccessor;
         }
     }

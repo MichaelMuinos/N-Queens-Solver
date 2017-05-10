@@ -70,6 +70,11 @@ public class CommandLineUIImpl implements CommandLineUI {
     }
 
     @Override
+    public void printAverageStats(double percentage, int avgSearchCost, double avgRuntime) {
+        System.out.println("\nPercentage solved: " + percentage + "%\nAverage search cost: " + avgSearchCost + "\nAverage runtime: " + avgRuntime + " seconds");
+    }
+
+    @Override
     public void printErrorMessage(int n, Algorithm algorithm) {
         System.out.println("\nSize: " + n + "\nError: " + algorithm + " could not solve the problem at size equal to " + n + ".");
     }

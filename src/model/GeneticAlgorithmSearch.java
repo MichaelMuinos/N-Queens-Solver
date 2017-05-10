@@ -26,8 +26,12 @@ public class GeneticAlgorithmSearch implements LocalSearchAlgorithm {
         long start = System.currentTimeMillis();
         // iterations count
         int iterations = 0;
-        Queue<GeneticBoardState> population = new PriorityQueue<>(INITIAL_POPULATION_SIZE, comparator);
+        // search cost variable
+        int searchCost = 0;
+        // total heuristic variable to calculate probabilities
         double totalHeuristic = 0;
+        // frontier to hold states
+        Queue<GeneticBoardState> population = new PriorityQueue<>(INITIAL_POPULATION_SIZE, comparator);
         // populate the initial population of board states
         for(int i = 0; i < INITIAL_POPULATION_SIZE; i++) {
             GeneticBoardState boardState = new GeneticBoardState(initialState.getSize());
@@ -55,12 +59,14 @@ public class GeneticAlgorithmSearch implements LocalSearchAlgorithm {
                 GeneticBoardState betterOffspring = offspring.getKey().getHeuristicValue() > offspring.getValue().getHeuristicValue() ? offspring.getKey() : offspring.getValue();
                 // add to our total heuristic
                 totalHeuristic += betterOffspring.getHeuristicValue();
+                // add to our search cost
+                ++searchCost;
                 // add betterOffspring offspring to new population
                 population.add(betterOffspring);
             }
-            if(++iterations == MAX_ITERATIONS) return new Stat(population.peek(), population.peek().getSize(), false, System.currentTimeMillis() - start);
+            if(++iterations == MAX_ITERATIONS) return new Stat(population.peek(), population.peek().getSize(), false, searchCost, (System.currentTimeMillis() - start) / 1000.0);
         }
-        return new Stat(population.peek(), population.peek().getSize(),true, System.currentTimeMillis() - start);
+        return new Stat(population.peek(), population.peek().getSize(), true, searchCost, (System.currentTimeMillis() - start) / 1000.0);
     }
 
     private Map<Integer,GeneticBoardState> getRanges(Queue<GeneticBoardState> population) {

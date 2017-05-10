@@ -27,12 +27,22 @@ public class CommandLinePresenterImpl implements CommandLinePresenter {
 
     @Override
     public void executeSearch(int n, Algorithm algorithm) {
+        // variables for showing average stats
+        int completed = 0;
+        int totalSearchCost = 0;
+        double totalRuntime = 0;
+        // start searches on various sizes
         for(int i = MIN_N; i <= n; i++) {
             BoardState boardState = new BoardState(i);
             Stat stat = algorithm == Algorithm.STEEPEST_HILL_CLIMBING ? steepestHillClimbingSearch.performSearch(boardState) : geneticAlgorithmSearch.performSearch(boardState);
-            if(stat.isSolved()) commandLineUI.printStatMessage(stat);
-            else commandLineUI.printErrorMessage(i, algorithm);
+            if(stat.isSolved()) {
+                commandLineUI.printStatMessage(stat);
+                ++completed;
+                totalSearchCost += stat.getSearchCost();
+                totalRuntime += stat.getRuntime();
+            } else commandLineUI.printErrorMessage(i, algorithm);
         }
+        commandLineUI.printAverageStats((double) completed / ((n - MIN_N) + 1) * 100, totalSearchCost / completed, totalRuntime / completed);
     }
 
 }
